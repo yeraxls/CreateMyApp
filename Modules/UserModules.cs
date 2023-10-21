@@ -6,12 +6,14 @@ public static class UserModules {
     {
         RouteGroupBuilder usersRoutes = app.MapGroup("/users");
 
-        usersRoutes.MapGet("/login", SignIn);
+        usersRoutes.MapPost("/login", SignIn);
         usersRoutes.MapPost("/signup", SignUp);
     }
-    static async Task<IResult> SignIn(UserDb db)
+    static async Task<IResult> SignIn(Login login,UserDb db)
     {
-        return TypedResults.Ok(await db.Get.ToListAsync());
+        return TypedResults.Ok(await db
+            .Queryable<User>(c => c.Mail == login.Mail && c.Password == login.Password)
+            .FirstOrDefaultAsync());
     }
 
     static async Task<IResult> SignUp(NewUser user, UserDb db)
@@ -21,9 +23,12 @@ public static class UserModules {
             Mail = user.Mail,
             Password = user.Password
         };
-        db.Get.Add(userDb);
+        await db.Insertar<User>(userDb);
+        
+        db.SalvarCambios();
+        // db.Get.Add(userDb);
 
-        await db.SaveChangesAsync();
+        // await db.SaveChangesAsync();
         return TypedResults.Created($"/users/{userDb.Id}", user);
     }
 
