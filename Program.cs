@@ -1,6 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Microsoft.EntityFrameworkCore;
 
-app.MapGet("/", () => "Hello World!");
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<UserDb>(opt => opt.UseInMemoryDatabase("Users"));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+var app = builder.Build();
+app.AddRoutes();
 
 app.Run();
