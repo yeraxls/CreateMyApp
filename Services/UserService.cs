@@ -38,9 +38,3 @@ public class UserService : IUserService {
             return TypedResults.Created($"/users/{userDb.Id}", user);
     }
 }
-
-public interface IUserService{
-    public Task<User?> SignIn(Login login);
-    Task<IResult> SignUp(NewUser user);
-    Task<IResult> ChangePassword(ChangePassword user);
-}
