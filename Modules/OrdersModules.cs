@@ -6,6 +6,8 @@ public static class OrdersModules
 
         ordersRoutes.MapPost("/neworder", PostOrder);
         ordersRoutes.MapGet("/{id}", GetOrders);
+        ordersRoutes.MapPut("/updateorder", PutOrders);
+        ordersRoutes.MapDelete("/deleteorder/{id}", DeleteOrders);
     }
     static async Task<IResult> PostOrder(NewOrder order, IOrdersService orderService)
     {
@@ -30,5 +32,27 @@ public static class OrdersModules
         }
     }
 
-    
+    static async Task<IResult> PutOrders(UpdateOrder order, IOrdersService orderService)
+    {
+        try
+        {
+            return TypedResults.Ok(orderService.PutOrder(order));
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }
+
+    static async Task<IResult> DeleteOrders(int id, IOrdersService orderService)
+    {
+        try
+        {
+            return TypedResults.Ok(orderService.DeleteOrder(id));
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }    
 }

@@ -15,4 +15,6 @@ public class Order {
     public string? Description {get; set;}
     [Column]
     public double? Price {get; set;}
+    [Column]
+    public StatusOrder StatusOrder {get; set;}
 }

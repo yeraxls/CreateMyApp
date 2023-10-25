@@ -4,4 +4,5 @@ public class NewOrder {
     public CustomType CustomType {get; set;}
     public string? Description {get; set;}
     public double? Price {get; set;}
+    public StatusOrder StatusOrder {get; set;}
 }
