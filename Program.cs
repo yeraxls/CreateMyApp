@@ -2,8 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<UserDb>(opt => opt.UseInMemoryDatabase("Users"));
-builder.Services.AddDbContext<OrderDb>(opt => opt.UseInMemoryDatabase("Orders"));
+IoC.AddDBContexts(builder.Services);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 IoC.AddDependency(builder.Services);
 var app = builder.Build();
