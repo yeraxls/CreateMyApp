@@ -1,7 +1,10 @@
 public enum StatusOrder{
+    None = 0,
     Pending = 1,
-    InProgress = 2,
-    ToValidate = 3,
-    Validate = 4,
-    Done = 5
+    Accepted = 2,
+    Rejected = 3,
+    InProgress = 4,
+    ToValidate = 5,
+    Validate = 6,
+    Done = 7
 }

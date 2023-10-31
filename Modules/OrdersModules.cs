@@ -8,6 +8,8 @@ public static class OrdersModules
         ordersRoutes.MapGet("/{id}", GetOrders);
         ordersRoutes.MapPut("/updateorder", PutOrders);
         ordersRoutes.MapDelete("/deleteorder/{id}", DeleteOrders);
+        ordersRoutes.MapPut("/changestatus", ChangeStatus);
+        ordersRoutes.MapGet("/gettaskbystatus/{statusOrder}", GetTaskByStatus);
     }
     static async Task<IResult> PostOrder(NewOrder order, IOrdersService orderService)
     {
@@ -24,7 +26,7 @@ public static class OrdersModules
     {
         try
         {
-            return TypedResults.Ok(orderService.GetMyOrders(id));
+            return TypedResults.Ok(await orderService.GetMyOrders(id));
         }
         catch
         {
@@ -36,7 +38,7 @@ public static class OrdersModules
     {
         try
         {
-            return TypedResults.Ok(orderService.PutOrder(order));
+            return TypedResults.Ok(await orderService.PutOrder(order));
         }
         catch
         {
@@ -48,11 +50,32 @@ public static class OrdersModules
     {
         try
         {
-            return TypedResults.Ok(orderService.DeleteOrder(id));
+            return TypedResults.Ok(await orderService.DeleteOrder(id));
         }
         catch
         {
             return TypedResults.NotFound();
         }
     }    
+
+    static async Task<IResult> ChangeStatus(ChangeStatusOrder changeStatusOrder, IOrdersService orderService){
+         try
+        {
+            return TypedResults.Ok(await orderService.ChangeStatus(changeStatusOrder));
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }
+    static async Task<IResult> GetTaskByStatus(StatusOrder statusOrder, IOrdersService orderService){
+         try
+        {
+            return TypedResults.Ok(await orderService.GetTaskByStatus(statusOrder));
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }
 }

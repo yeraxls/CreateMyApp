@@ -21,7 +21,7 @@ public class OrdersService : IOrdersService
                 CustomType = order.CustomType,
                 Description = order.Description ?? "",
                 Price = order.Price ?? 0.0,
-                StatusOrder = StatusOrder.Pending
+                StatusOrder = StatusOrder.None
             };
             await _db.Insertar(orderdb);
             _db.SalvarCambios();
@@ -39,7 +39,7 @@ public class OrdersService : IOrdersService
         {
             var orderdb = _db.Queryable<Order>(c => c.Id == order.Id).FirstOrDefault();
             if (orderdb is null) return TypedResults.NotFound();
-            await UpdateOrder(orderdb, order);
+            UpdateOrder(orderdb, order);
             _db.SalvarCambios();
             return TypedResults.Created($"/order/{orderdb.Id}", order);
         }
@@ -49,7 +49,7 @@ public class OrdersService : IOrdersService
         }
     }
 
-    private async Task UpdateOrder(Order orderdb, UpdateOrder order)
+    private void UpdateOrder(Order orderdb, UpdateOrder order)
     {
         orderdb.Name = order.Name;
         orderdb.CustomType = order.CustomType;
@@ -81,6 +81,48 @@ public class OrdersService : IOrdersService
             _db.Eliminar(orderdb);
             _db.SalvarCambios();
             return TypedResults.Created($"/order/{orderdb.Id}");
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }
+
+    public async Task<IResult> ChangeStatus(ChangeStatusOrder changeStatus)
+    {
+        try
+        {
+            var orderdb = await _db.Queryable<Order>(c => c.Id == changeStatus.IdOrder).FirstOrDefaultAsync();
+            if (orderdb is null) return TypedResults.NotFound();
+            orderdb.StatusOrder = changeStatus.Status;
+            _db.SalvarCambios();
+            return TypedResults.Created($"/order/{orderdb.Id}");
+        }
+        catch
+        {
+            return TypedResults.NotFound();
+        }
+    }
+    public async Task<IResult> GetTaskByStatus(StatusOrder statusOrder)
+    {
+        try
+        {
+            var ordersdb = await _db.Queryable<Order>(c => c.StatusOrder == statusOrder)
+            .Select(c => new OrdersPendings
+            {
+                Id = c.Id,
+                Name = c.Name,
+                CustomType = c.CustomType,
+                Description = c.Description,
+                DateOfOrder = c.DateOfOrder,
+                Price = c.Price,
+                StatusOrder = c.StatusOrder,
+                UserId = c.UserId,
+                IdDeveloper = c.IdDeveloper
+            }).ToListAsync();
+            if (ordersdb is null) return TypedResults.NotFound();
+
+            return TypedResults.Created($"/order/{ordersdb}");
         }
         catch
         {
